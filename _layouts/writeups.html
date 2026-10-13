@@ -1,0 +1,24 @@
+---
+layout: page
+# Lists all posts of the category given by `page.category`
+---
+
+{% include lang.html %}
+
+{% assign posts = site.categories[page.category] %}
+
+<div id="page-category">
+  {{ content }}
+
+  <ul class="content ps-0">
+    {% for post in posts %}
+      <li class="d-flex justify-content-between px-md-3">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        <span class="dash flex-grow-1"></span>
+        {% include datetime.html date=post.date class='text-muted small text-nowrap' lang=lang %}
+      </li>
+    {% else %}
+      <li class="px-md-3 text-muted">No writeups yet.</li>
+    {% endfor %}
+  </ul>
+</div>
