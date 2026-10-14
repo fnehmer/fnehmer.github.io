@@ -1,24 +1,40 @@
 ---
 layout: page
-# Lists all posts of the category given by `page.category`
+# Lists all posts of the category given by `page.category`,
+# grouped by their subcategory (the second entry of `categories`)
 ---
 
 {% include lang.html %}
 
 {% assign posts = site.categories[page.category] %}
+{% assign groups = posts | group_by_exp: 'post', 'post.categories[1] | default: "Other"' | sort: 'name' %}
 
 <div id="page-category">
   {{ content }}
 
-  <ul class="content ps-0">
-    {% for post in posts %}
-      <li class="d-flex justify-content-between px-md-3">
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        <span class="dash flex-grow-1"></span>
-        {% include datetime.html date=post.date class='text-muted small text-nowrap' lang=lang %}
-      </li>
-    {% else %}
-      <li class="px-md-3 text-muted">No writeups yet.</li>
-    {% endfor %}
-  </ul>
+  {% for group in groups %}
+    <h2 class="ps-lg-2 mt-4">
+      <i class="far fa-folder-open fa-fw text-muted"></i>
+      {% if group.name == 'Other' %}
+        {{ group.name }}
+      {% else %}
+        {% capture _sub_ctg_url %}/categories/{{ group.name | slugify | url_encode }}/{% endcapture %}
+        <a href="{{ _sub_ctg_url | relative_url }}">{{ group.name }}</a>
+      {% endif %}
+      <span class="lead text-muted ps-2">{{ group.size }}</span>
+    </h2>
+
+    <ul class="content ps-0">
+      {% assign group_posts = group.items | sort: 'path' %}
+      {% for post in group_posts %}
+        <li class="d-flex justify-content-between px-md-3">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          <span class="dash flex-grow-1"></span>
+          {% include datetime.html date=post.date class='text-muted small text-nowrap' lang=lang %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="px-md-3 text-muted">No writeups yet.</p>
+  {% endfor %}
 </div>
