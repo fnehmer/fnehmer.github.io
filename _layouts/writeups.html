@@ -10,7 +10,12 @@ layout: page
 {% assign groups = posts | group_by_exp: 'post', 'post.categories[1] | default: "Other"' | sort: 'name' %}
 
 <div id="page-category">
-  {{ content }}
+  {% assign intro = content | strip %}
+  {% if intro != '' %}
+    <div class="writeups-intro px-md-3 pb-2 mb-4 border-bottom">
+      {{ content }}
+    </div>
+  {% endif %}
 
   {% for group in groups %}
     <h2 class="ps-lg-2 mt-4">
